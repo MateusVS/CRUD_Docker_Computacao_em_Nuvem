@@ -1,0 +1,79 @@
+  <!DOCTYPE html>
+  <html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List</title>
+    <link rel="stylesheet" href="/css/styles.css" type="text/css">
+  </head>
+  <body>
+    <h1 class="title">Lista de ToDo`s</h1>
+    <div class="">
+      <form class="body" action="/todos/create" method="post">
+        <div class="content">
+          <label for="title">Título:</label>
+          <input type="text" class="input" name="title" id="title" required>
+        </div>
+        <br />
+        <div class="content">
+          <label for="description">Descrição:</label>
+          <textarea class="input" name="description" id="description" required></textarea>
+        </div>
+        <br>
+        <button class="button" type="submit">Criar ToDo</button>
+      </form>
+    </div>
+    <div class="body">
+      <%- include('../partials/toDoList'); %>
+    </div>
+    <script src="/js/jquery.js"></script>
+    <script>
+      $(document).ready(function() {
+        $(".deleteButton").on("click", function() {
+          const id = $(this).data("id");
+          const title = $(this).data("title");
+
+          if (confirm(`Deseja realmente excluir o ToDo "${title}"?`)) {
+            $.ajax({
+              type: "DELETE",
+              url: `/todos/${id}`,
+              success: function(response) {
+                alert(response.message);
+
+                location.reload();
+              },
+              error: function(error) {
+                alert("Erro ao excluir o ToDo");
+              }
+            });
+          }
+        });
+      });
+
+      $(document).ready(function() {
+        $(".editButton").on("click", function() {
+          const id = $(this).data("id");
+          const title = $(this).data("title");
+          const description = $(this).data("description");
+
+          const newTitle = prompt("Editar Título:", title);
+          const newDescription = prompt("Editar Descrição:", description);
+
+          if (newTitle !== null) {
+            $.ajax({
+              type: "PUT",
+              url: `/todos/${id}`,
+              data: { title: newTitle },
+              success: function(response) {
+                location.reload();
+              },
+              error: function(error) {
+                alert("Erro ao atualizar o ToDo");
+              }
+            });
+          }
+        });
+      });
+  </script>
+  </body>
+  </html>
